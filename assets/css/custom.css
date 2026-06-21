@@ -1,0 +1,215 @@
+/*
+ * Site-specific overrides.
+ * Loaded after the main stylesheet.
+ */
+
+:root {
+    --color-brand: #2b5df5;
+    --color-light-black: #17213f;
+    --color-black: #10182f;
+    --color-dark-black: #071126;
+    --color-dark-grey: #64708f;
+    --type-default-color: #44506c;
+    --type-header-color: #10182f;
+    --border-color: #dce3f7;
+    --background-color: #f6f8ff;
+    --gradient-blue: #b8c9ff;
+    --gradient-cyan: #d9e4ff;
+    --gradient-purple: #aebfff;
+}
+
+body {
+    background:
+        radial-gradient(circle at 8% 12%, rgba(43, 93, 245, .10), transparent 24rem),
+        radial-gradient(circle at 92% 18%, rgba(119, 146, 255, .12), transparent 22rem),
+        var(--background-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: 'Urbanist', Arial, sans-serif !important;
+}
+
+a,
+.btn__outline {
+    color: #2b5df5 !important;
+}
+
+a:hover,
+.nav>ul>li>a:not(.btn__black):not(.btn__outline):hover,
+.footer-area__nav ul li a:hover,
+.footer-legal-nav a:hover,
+.footer #footer-bottom a:hover {
+    color: #6f8cff !important;
+}
+
+.footer a,
+.footer-area__nav ul li a,
+.footer-legal-nav a,
+.footer #footer-bottom a {
+    color: #ffffff !important;
+}
+
+#footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header .nav>ul>li>a:not(.btn__black):not(.btn__outline) {
+    color: #000 !important;
+}
+
+.header .nav>ul>li>a:not(.btn__black):not(.btn__outline):hover {
+    color: #2b5df5 !important;
+}
+
+.section[data-type=dark],
+.section[data-type=lightDark],
+.footer,
+#footer-area,
+.footer-clients {
+    background:
+        radial-gradient(circle at 10% 0%, rgba(43, 93, 245, .36), transparent 28rem),
+        radial-gradient(circle at 90% 12%, rgba(119, 146, 255, .26), transparent 24rem),
+        #071126;
+}
+
+.section[data-type=dark] .pretitle,
+.section[data-type=lightDark] .pretitle {
+    color: #b8c9ff;
+}
+
+.btn__black {
+    background: linear-gradient(135deg, #071126 0%, #2b5df5 100%) !important;
+    box-shadow: 0 14px 34px rgba(43, 93, 245, .22);
+}
+
+.btn__black:before {
+    background: rgba(184, 201, 255, .28);
+}
+
+.btn__outline {
+    border-color: #2b5df5 !important;
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn__black,
+.btn__outline,
+.btn__default {
+    border-radius: 4px !important;
+}
+
+.stats__number {
+    color: #2b5df5;
+}
+
+.stats__label {
+    color: #4d6ff7;
+}
+
+.form input[type=text]:focus,
+.form textarea:focus {
+    border-color: #2b5df5;
+}
+
+.page-contact .page__heading h1,
+.page-contact .page__heading .title,
+.page-portfolio .page__heading h1,
+.page-portfolio .page__heading .title {
+    font-weight: 700 !important;
+}
+
+.page-portfolio .page__heading {
+    margin-bottom: 70px;
+}
+
+#my-clients ul:last-of-type {
+    display: block;
+}
+
+.service__blocks[data-type=dark] #my-clients ul li span:before {
+    border-color: rgba(184, 201, 255, .16);
+    background:
+        linear-gradient(145deg, rgba(43, 93, 245, .36) 0%, rgba(7, 17, 38, .92) 100%),
+        #2b5df5;
+}
+
+.service__blocks[data-type=dark] #my-clients ul li span,
+.service__blocks[data-type=dark] #my-clients picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.service__blocks[data-type=dark] #my-clients img {
+    display: block;
+    margin: 0 auto;
+}
+
+.portfolio-next {
+    border-top: 1px solid rgba(43, 93, 245, .14);
+    background:
+        radial-gradient(circle at 12% 20%, rgba(43, 93, 245, .10), transparent 24rem),
+        rgba(255, 255, 255, .42);
+}
+
+.portfolio-next .pretitle {
+    color: #2b5df5;
+    margin-bottom: .75rem;
+}
+
+.portfolio-next .title {
+    margin-top: 0;
+}
+
+.portfolio-next .subtitle {
+    max-width: 760px;
+}
+
+.form-input > label {
+    margin: 1rem 0 0.5rem;
+}
+
+.radio-group {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.radio-group .custom-radio {
+    display: inline-flex !important;
+    align-items: center;
+    flex: 0 0 auto;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.radio-group .custom-control-label {
+    display: inline-flex !important;
+    align-items: center;
+    width: auto !important;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+
+.radio-group + .form-input,
+.radio-group {
+    margin-bottom: 1.5rem;
+}

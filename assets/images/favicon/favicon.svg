@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FXN Studio">
+  <rect width="512" height="512" rx="104" fill="#101010"/>
+  <path d="M90 126h160v62H160v58h76v60h-76v84H90V126Z" fill="#fff"/>
+  <path d="M220 126h76l39 72 40-72h73l-76 128 82 136h-78l-44-80-46 80h-74l82-136-74-128Z" fill="#d7ff64"/>
+  <path d="M342 126h70v264h-62l-72-115 4 115h-70V126h62l72 116-4-116Z" fill="#fff"/>
+</svg>

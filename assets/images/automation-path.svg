@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" role="img" aria-labelledby="title desc">
+  <title id="title">Automation path workflow illustration</title>
+  <desc id="desc">An animated workflow diagram showing audit, prototype, connect and launch moving through an AI automation path.</desc>
+  <style>
+    :root {
+      --ink: #111111;
+      --coral: #ff7a59;
+      --cream: #f7f5ef;
+      --sage: #dfead2;
+      --aqua: #9dd8d0;
+      --line: rgba(255, 255, 255, 0.28);
+    }
+
+    .bg {
+      fill: #161616;
+    }
+
+    .grid {
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 1;
+    }
+
+    .panel {
+      fill: rgba(255, 255, 255, 0.08);
+      stroke: rgba(255, 255, 255, 0.22);
+      stroke-width: 1.5;
+    }
+
+    .node {
+      fill: #f7f5ef;
+      stroke: rgba(255, 255, 255, 0.36);
+      stroke-width: 2;
+      filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.22));
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: nodePulse 4.8s ease-in-out infinite;
+    }
+
+    .node-2 {
+      animation-delay: 0.45s;
+    }
+
+    .node-3 {
+      animation-delay: 0.9s;
+    }
+
+    .node-4 {
+      animation-delay: 1.35s;
+    }
+
+    .path-line {
+      fill: none;
+      stroke: #ff7a59;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 24 18;
+      animation: flow 2.8s linear infinite;
+      filter: drop-shadow(0 0 12px rgba(255, 122, 89, 0.34));
+    }
+
+    .path-soft {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.16);
+      stroke-width: 18;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .orb {
+      fill: #ff7a59;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: travel 6s ease-in-out infinite;
+    }
+
+    .chip {
+      fill: #111111;
+    }
+
+    .chip-line {
+      stroke: #ff7a59;
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+
+    .label {
+      fill: #111111;
+      font-family: Urbanist, Arial, sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      fill: rgba(17, 17, 17, 0.66);
+      font-family: Urbanist, Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .spark {
+      fill: #9dd8d0;
+      opacity: 0.78;
+      animation: twinkle 3.2s ease-in-out infinite;
+    }
+
+    .spark-2 {
+      animation-delay: 0.7s;
+    }
+
+    .spark-3 {
+      animation-delay: 1.4s;
+    }
+
+    .spark-4 {
+      animation-delay: 2.1s;
+    }
+
+    @keyframes flow {
+      to {
+        stroke-dashoffset: -84;
+      }
+    }
+
+    @keyframes nodePulse {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-5px) scale(1.018);
+      }
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.28;
+        transform: scale(0.86);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.14);
+      }
+    }
+
+    @keyframes travel {
+      0%, 100% {
+        transform: translate(0, 0) scale(0.92);
+      }
+      25% {
+        transform: translate(112px, -56px) scale(1);
+      }
+      50% {
+        transform: translate(222px, 18px) scale(0.94);
+      }
+      75% {
+        transform: translate(340px, -46px) scale(1.05);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .node,
+      .path-line,
+      .orb,
+      .spark {
+        animation: none;
+      }
+    }
+  </style>
+  <rect class="bg" width="520" height="420" rx="32"/>
+  <path class="grid" d="M50 0v420M150 0v420M250 0v420M350 0v420M450 0v420M0 72h520M0 172h520M0 272h520M0 372h520"/>
+  <circle class="spark spark-1" cx="78" cy="76" r="5"/>
+  <circle class="spark spark-2" cx="442" cy="76" r="7"/>
+  <circle class="spark spark-3" cx="472" cy="310" r="5"/>
+  <circle class="spark spark-4" cx="104" cy="344" r="6"/>
+  <rect class="panel" x="34" y="34" width="452" height="340" rx="28"/>
+  <path class="path-soft" d="M87 254C136 150 188 144 240 214C294 286 346 276 421 154"/>
+  <path class="path-line" d="M87 254C136 150 188 144 240 214C294 286 346 276 421 154"/>
+  <circle class="orb" cx="87" cy="254" r="10"/>
+
+  <g class="node node-1">
+    <rect x="48" y="214" width="118" height="86" rx="22"/>
+    <rect class="chip" x="72" y="235" width="34" height="34" rx="10"/>
+    <path class="chip-line" d="M80 247h18M80 257h12"/>
+    <text class="label" x="72" y="286">Audit</text>
+    <text class="sub" x="72" y="322">Inputs</text>
+  </g>
+
+  <g class="node node-2">
+    <rect x="164" y="102" width="132" height="92" rx="24"/>
+    <rect class="chip" x="188" y="124" width="38" height="38" rx="11"/>
+    <path class="chip-line" d="M196 139h22M196 151h14"/>
+    <text class="label" x="188" y="181">Prototype</text>
+    <text class="sub" x="188" y="217">Tool</text>
+  </g>
+
+  <g class="node node-3">
+    <rect x="272" y="226" width="126" height="90" rx="24"/>
+    <rect class="chip" x="296" y="248" width="38" height="38" rx="11"/>
+    <path class="chip-line" d="M303 267h24M315 255v24"/>
+    <text class="label" x="296" y="303">Connect</text>
+    <text class="sub" x="296" y="339">Systems</text>
+  </g>
+
+  <g class="node node-4">
+    <rect x="354" y="80" width="120" height="90" rx="24"/>
+    <rect class="chip" x="378" y="102" width="38" height="38" rx="11"/>
+    <path class="chip-line" d="M387 121l7 7 14-18"/>
+    <text class="label" x="378" y="157">Launch</text>
+    <text class="sub" x="378" y="193">Review</text>
+  </g>
+</svg>
