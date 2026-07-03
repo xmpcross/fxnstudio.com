@@ -219,10 +219,10 @@ if (!getCookieConsent()) {
   });
 }
 
-const form = document.querySelector("[data-contact-form]");
-const status = document.querySelector("[data-form-status]");
+document.querySelectorAll("[data-contact-form]").forEach((form) => {
+  const status = form.querySelector("[data-form-status]");
+  if (!status) return;
 
-if (form && status) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -234,15 +234,14 @@ if (form && status) {
     status.className = "form-status";
 
     try {
-      const response = await fetch(form.action, {
+      const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(new FormData(form)).toString()
       });
-      const data = await response.json().catch(() => ({}));
 
-      if (!response.ok || data.error) {
-        throw new Error(data.error || "Message could not be sent.");
+      if (!response.ok) {
+        throw new Error("Message could not be sent.");
       }
 
       form.reset();
@@ -256,4 +255,4 @@ if (form && status) {
       button.textContent = initialText;
     }
   });
-}
+});
