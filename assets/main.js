@@ -1,258 +1,364 @@
-const navToggle = document.querySelector("[data-nav-toggle]");
-const nav = document.querySelector("[data-nav]");
-const header = document.querySelector("[data-header]");
-const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-const briefModal = document.querySelector("[data-brief-modal]");
-const briefOpeners = document.querySelectorAll("[data-open-brief]");
-const briefClosers = document.querySelectorAll("[data-close-brief]");
-let lastBriefTrigger = null;
+/* ==========================================================================
+   FXN Studio - Ultra Luxury Interactive System
+   - Theme Switcher (Dark Velvet Obsidian / Light Cashmere Pearl)
+   - Interactive Spotlight Aura Mouse Follower
+   - Smooth Scroll & Top Progress Indicator
+   - Bento Category Filter
+   - Interactive Project Estimator Calculator
+   - Modal Brief Handler
+   - IntersectionObserver Reveal Animations
+   ========================================================================== */
 
-if (navToggle && nav) {
-  navToggle.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  nav.addEventListener("click", (event) => {
-    if (event.target instanceof HTMLAnchorElement) {
-      nav.classList.remove("is-open");
-      navToggle.setAttribute("aria-expanded", "false");
+document.addEventListener("DOMContentLoaded", () => {
+  // Lucide SVG Icons Initialization
+  const initIcons = () => {
+    if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+      lucide.createIcons();
     }
-  });
-}
+  };
+  initIcons();
 
-const openBriefModal = (trigger) => {
-  if (!briefModal) return;
-  lastBriefTrigger = trigger || document.activeElement;
-  briefModal.classList.add("is-open");
-  briefModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  briefModal.querySelector(".form-row input, .form-row textarea, .form-row select")?.focus();
-};
-
-const closeBriefModal = () => {
-  if (!briefModal) return;
-  briefModal.classList.remove("is-open");
-  briefModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-  if (lastBriefTrigger instanceof HTMLElement) {
-    lastBriefTrigger.focus();
+  // 0. Lenis Smooth Scrolling Engine (https://tunabytes.com/blog/smooth-scrolling)
+  let lenis = null;
+  if (typeof Lenis !== "undefined") {
+    lenis = new Lenis({
+      autoRaf: true,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 2,
+    });
   }
-};
 
-briefOpeners.forEach((opener) => {
-  opener.addEventListener("click", (event) => {
-    event.preventDefault();
-    nav?.classList.remove("is-open");
-    navToggle?.setAttribute("aria-expanded", "false");
-    openBriefModal(opener);
-  });
-});
+  // 1. Dark / Light Theme Toggle Switcher with LocalStorage Persistence
+  const themeToggle = document.querySelector("[data-theme-toggle]");
+  const storageKey = "fxnstudio_theme";
 
-briefClosers.forEach((closer) => {
-  closer.addEventListener("click", closeBriefModal);
-});
+  const savedTheme = localStorage.getItem(storageKey) || "dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && briefModal?.classList.contains("is-open")) {
-    closeBriefModal();
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+      const nextTheme = currentTheme === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      localStorage.setItem(storageKey, nextTheme);
+    });
   }
-});
 
-const revealTargets = [
-  ".page-hero",
-  ".intro-section",
-  ".services .section-heading",
-  ".services-page-section .section-heading",
-  ".services-method-section .section-heading",
-  ".services-stack-band",
-  ".service-detail-section",
-  ".service-outcome-section .section-heading",
-  ".service-outcome-grid",
-  ".service-fit-section .section-heading",
-  ".service-fit-grid",
-  ".about-story-section",
-  ".about-process-section .section-heading",
-  ".about-proof-band",
-  ".portfolio-cta-band",
-  ".services-panel",
-  ".service-grid",
-  ".services-detail-grid",
-  ".method-grid",
-  ".work .section-heading",
-  ".work-grid",
-  ".work-footer",
-  ".technology .section-heading",
-  ".logo-cloud",
-  ".process .section-heading",
-  ".process-list",
-  ".about-principles"
-];
+  // 2. Interactive Spotlight Aura Mouse Follower
+  const aura = document.createElement("div");
+  aura.className = "spotlight-aura";
+  aura.setAttribute("aria-hidden", "true");
+  document.body.appendChild(aura);
 
-document.querySelectorAll(revealTargets.join(",")).forEach((element) => {
-  element.classList.add("reveal");
-});
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let auraX = mouseX;
+  let auraY = mouseY;
 
-document.querySelectorAll(".service-grid, .services-detail-grid, .method-grid, .service-outcome-grid, .service-fit-grid, .about-principles, .about-proof-band, .work-grid, .logo-cloud, .process-list").forEach((group) => {
-  group.classList.add("reveal-stagger");
-  Array.from(group.children).forEach((child, index) => {
-    child.style.setProperty("--stagger-index", index);
-  });
-});
+  window.addEventListener("pointermove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  }, { passive: true });
 
-if ("IntersectionObserver" in window) {
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        revealObserver.unobserve(entry.target);
+  const animateAura = () => {
+    auraX += (mouseX - auraX) * 0.12;
+    auraY += (mouseY - auraY) * 0.12;
+    aura.style.transform = `translate3d(${auraX}px, ${auraY}px, 0) translate(-50%, -50%)`;
+    requestAnimationFrame(animateAura);
+  };
+  requestAnimationFrame(animateAura);
+
+  // 3. Top Scroll Progress Indicator & Header Blur State
+  const progressBar = document.createElement("div");
+  progressBar.id = "scroll-progress";
+  progressBar.className = "scroll-progress-bar";
+  progressBar.setAttribute("aria-hidden", "true");
+  document.body.appendChild(progressBar);
+
+  const header = document.querySelector("[data-header]");
+
+  const handleScroll = () => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+    progressBar.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
+
+    if (header) {
+      header.classList.toggle("is-scrolled", scrollTop > 20);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
+
+  // 4. Smooth Anchor Scroll with Header Offset & Lenis Integration
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      const targetId = this.getAttribute("href");
+      if (targetId === "#" || targetId === "#project-brief-modal") return;
+
+      const targetEl = document.querySelector(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        const headerOffset = header ? header.offsetHeight + 20 : 80;
+
+        if (lenis) {
+          lenis.scrollTo(targetEl, { offset: -headerOffset, duration: 1.2 });
+        } else {
+          const elementPosition = targetEl.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+
+        // Close mobile menu if open
+        const mobileMenu = document.querySelector("[data-mobile-menu]");
+        const navToggle = document.querySelector("[data-nav-toggle]");
+        if (mobileMenu && mobileMenu.classList.contains("is-open")) {
+          mobileMenu.classList.remove("is-open");
+          if (navToggle) navToggle.setAttribute("aria-expanded", "false");
+          document.body.style.overflow = "";
+        }
       }
     });
-  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.14 });
-
-  document.querySelectorAll(".reveal").forEach((element) => {
-    revealObserver.observe(element);
   });
-} else {
-  document.querySelectorAll(".reveal").forEach((element) => {
-    element.classList.add("is-visible");
-  });
-}
 
-const sections = Array.from(document.querySelectorAll("main section[id]"));
-const navLinks = Array.from(document.querySelectorAll(".site-nav a[href^='#']"));
+  // 5. Services Mega Menu Toggle
+  const megaToggle = document.querySelector("[data-mega-toggle]");
+  const megaMenu = document.querySelector("[data-mega-menu]");
 
-if ("IntersectionObserver" in window && sections.length && navLinks.length) {
-  const navObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const activeLink = navLinks.find((link) => link.getAttribute("href") === `#${entry.target.id}`);
-      navLinks.forEach((link) => link.classList.toggle("is-active", link === activeLink));
+  if (megaToggle && megaMenu) {
+    megaToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = megaMenu.classList.toggle("is-open");
+      megaToggle.setAttribute("aria-expanded", String(isOpen));
+      megaMenu.setAttribute("aria-hidden", String(!isOpen));
     });
-  }, { rootMargin: "-35% 0px -55% 0px", threshold: 0.01 });
 
-  sections.forEach((section) => navObserver.observe(section));
-}
-
-let scrollTicking = false;
-
-const updateScrollEffects = () => {
-  const scrollY = window.scrollY || 0;
-
-  if (!motionQuery.matches) {
-    const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-    const ratio = Math.min(scrollY / maxScroll, 1);
-    const clampedHeroScroll = Math.min(scrollY, 900);
-
-    document.documentElement.style.setProperty("--glow-left", `${16 + ratio * 24}%`);
-    document.documentElement.style.setProperty("--glow-right", `${88 - ratio * 18}%`);
-    document.documentElement.style.setProperty("--stage-drift-x", `${clampedHeroScroll * -0.04}px`);
-    document.documentElement.style.setProperty("--stage-drift-y", `${clampedHeroScroll * 0.02}px`);
-    document.documentElement.style.setProperty("--parallax-card", `${clampedHeroScroll * -0.018}px`);
-    document.documentElement.style.setProperty("--parallax-grid", `${clampedHeroScroll * -0.012}px`);
-    document.documentElement.style.setProperty("--parallax-screen-one", `${clampedHeroScroll * -0.024}px`);
-    document.documentElement.style.setProperty("--parallax-screen-two", `${clampedHeroScroll * -0.04}px`);
+    document.addEventListener("click", (e) => {
+      if (!megaMenu.contains(e.target) && !megaToggle.contains(e.target)) {
+        megaMenu.classList.remove("is-open");
+        megaToggle.setAttribute("aria-expanded", "false");
+        megaMenu.setAttribute("aria-hidden", "true");
+      }
+    });
   }
 
-  if (header) {
-    header.classList.toggle("is-scrolled", scrollY > 12);
+  // 6. Mobile Navigation Toggle
+  const navToggle = document.querySelector("[data-nav-toggle]");
+  const mobileMenu = document.querySelector("[data-mobile-menu]");
+
+  if (navToggle && mobileMenu) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = mobileMenu.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", String(isOpen));
+      mobileMenu.setAttribute("aria-hidden", String(!isOpen));
+      document.body.style.overflow = isOpen ? "hidden" : "";
+    });
   }
 
-  scrollTicking = false;
-};
+  // 7. Interactive Need Selector Tabs
+  const needTabs = document.querySelectorAll("[data-need-tabs] .need-tabs button");
+  const panelTitle = document.getElementById("panel-title");
+  const panelDesc = document.getElementById("panel-desc");
+  const panelLink = document.getElementById("panel-link");
+  const panelSteps = document.getElementById("panel-steps");
 
-const requestScrollUpdate = () => {
-  if (scrollTicking) return;
-  scrollTicking = true;
-  window.requestAnimationFrame(updateScrollEffects);
-};
+  const tabData = {
+    "1": {
+      title: "Website Design & Custom Development",
+      desc: "Bespoke digital platforms engineered for brand authority, fluid responsive design, rapid load speeds and high conversion rate optimization.",
+      link: "/services/#web-design",
+      steps: [
+        "Brand Strategy & Digital Architecture",
+        "High-Fidelity Visual & Interactive UX",
+        "Clean Modern Frontend & CMS Engine",
+        "Technical SEO, Speed Optimization & QA"
+      ]
+    },
+    "2": {
+      title: "eCommerce & High-Converting Storefronts",
+      desc: "Architected for maximum sales throughput: seamless product browsing, custom Shopify/headless code, and checkout friction removal.",
+      link: "/services/#ecommerce",
+      steps: [
+        "E-commerce Strategy & Catalog Hierarchy",
+        "Conversion-Engineered Product & Cart UX",
+        "Custom Shopify / Headless API Integration",
+        "Checkout Optimization & Analytics Tuning"
+      ]
+    },
+    "3": {
+      title: "AI Integrations & Custom Web Automation",
+      desc: "Empower your business operations with intelligent AI chat agents, custom workflow tools, and automated customer acquisition pipelines.",
+      link: "/services/#ai-integrations",
+      steps: [
+        "AI Opportunity Audit & System Mapping",
+        "LLM & Model API Integration Architecture",
+        "Custom AI Web & Conversational Interfaces",
+        "Automated Lead Capture & CRM Sync"
+      ]
+    },
+    "4": {
+      title: "Technical SEO & Search Dominance",
+      desc: "Data-driven SEO programs engineered around high-intent keywords, core web vitals, and scalable authority building for Perth & global search.",
+      link: "/services/#seo-growth",
+      steps: [
+        "Commercial Intent & Keyword Intelligence",
+        "Technical Audit & Core Web Vitals Optimization",
+        "Information Architecture & Landing Systems",
+        "Search Authority & Conversion Analytics"
+      ]
+    }
+  };
 
-updateScrollEffects();
-window.addEventListener("scroll", requestScrollUpdate, { passive: true });
-window.addEventListener("resize", requestScrollUpdate);
+  if (needTabs.length && panelTitle && panelDesc && panelSteps) {
+    needTabs.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tabId = button.getAttribute("data-tab");
+        const data = tabData[tabId];
+        if (!data) return;
 
-const cookieStorageKey = "fxnstudio_cookie_consent";
-const cookieBanner = document.createElement("section");
-cookieBanner.className = "cookie-banner";
-cookieBanner.setAttribute("aria-label", "Cookie notice");
-cookieBanner.innerHTML = `
-  <span class="cookie-banner__label">Cookie Notice</span>
-  <h2>Cookies keep this site useful.</h2>
-  <p>FXN Studio uses essential cookies and may use analytics cookies to understand website performance. You can accept all cookies or keep only essential cookies. Read the <a href="/cookie-information/">Cookie Information</a>.</p>
-  <div class="cookie-banner__actions">
-    <button class="button button-primary" type="button" data-cookie-choice="accepted">Accept all</button>
-    <button class="button cookie-banner__secondary" type="button" data-cookie-choice="essential">Essential only</button>
-  </div>
-`;
+        needTabs.forEach((btn) => btn.setAttribute("aria-selected", "false"));
+        button.setAttribute("aria-selected", "true");
 
-const setCookieConsent = (choice) => {
-  try {
-    window.localStorage.setItem(cookieStorageKey, JSON.stringify({
-      choice,
-      savedAt: new Date().toISOString()
-    }));
-  } catch (error) {
-    document.cookie = `${cookieStorageKey}=${choice}; path=/; max-age=31536000; SameSite=Lax`;
+        panelTitle.textContent = data.title;
+        panelDesc.textContent = data.desc;
+        if (panelLink) panelLink.setAttribute("href", data.link);
+
+        panelSteps.innerHTML = data.steps
+          .map((step, idx) => `<li><span>0${idx + 1}</span> <strong>${step}</strong></li>`)
+          .join("");
+      });
+    });
   }
-  cookieBanner.classList.remove("is-visible");
-};
 
-const getCookieConsent = () => {
-  try {
-    return window.localStorage.getItem(cookieStorageKey);
-  } catch (error) {
-    return document.cookie.split("; ").find((item) => item.startsWith(`${cookieStorageKey}=`));
+  // 8. Selected Work Bento Grid Interactive Category Filter
+  const filterBtns = document.querySelectorAll("[data-bento-filter]");
+  const bentoItems = document.querySelectorAll(".bento-card[data-category]");
+
+  if (filterBtns.length && bentoItems.length) {
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const filter = btn.getAttribute("data-bento-filter");
+        filterBtns.forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+
+        bentoItems.forEach((item) => {
+          const category = item.getAttribute("data-category");
+          if (filter === "all" || category === filter) {
+            item.style.display = "";
+            setTimeout(() => {
+              item.style.opacity = "1";
+              item.style.transform = "translateY(0) scale(1)";
+            }, 20);
+          } else {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(15px) scale(0.96)";
+            setTimeout(() => {
+              item.style.display = "none";
+            }, 300);
+          }
+        });
+      });
+    });
   }
-};
 
-if (!getCookieConsent()) {
-  document.body.appendChild(cookieBanner);
-  window.requestAnimationFrame(() => {
-    cookieBanner.classList.add("is-visible");
-  });
+  // 9. Interactive Project Budget & Timeline Estimator Widget
+  const estimatorForm = document.querySelector("[data-estimator]");
+  if (estimatorForm) {
+    const scopeCheckboxes = estimatorForm.querySelectorAll("input[type='checkbox']");
+    const timelineSelect = estimatorForm.querySelector("select[name='timeline']");
+    const estimatePriceEl = document.getElementById("est-price");
+    const estimateTimeEl = document.getElementById("est-time");
 
-  cookieBanner.addEventListener("click", (event) => {
-    if (!(event.target instanceof Element)) return;
-    const button = event.target.closest("[data-cookie-choice]");
-    if (!button) return;
-    setCookieConsent(button.getAttribute("data-cookie-choice"));
-  });
-}
+    const calculateEstimate = () => {
+      let basePrice = 0;
+      let totalWeeks = 0;
 
-document.querySelectorAll("[data-contact-form]").forEach((form) => {
-  const status = form.querySelector("[data-form-status]");
-  if (!status) return;
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const button = form.querySelector("button[type='submit']");
-    const initialText = button.textContent;
-    button.disabled = true;
-    button.textContent = "Sending...";
-    status.textContent = "";
-    status.className = "form-status";
-
-    try {
-      const response = await fetch("/__forms.html", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(new FormData(form)).toString()
+      scopeCheckboxes.forEach((cb) => {
+        if (cb.checked) {
+          basePrice += parseInt(cb.dataset.price || "0", 10);
+          totalWeeks += parseInt(cb.dataset.weeks || "0", 10);
+        }
       });
 
-      if (!response.ok) {
-        throw new Error("Message could not be sent.");
+      if (basePrice === 0) {
+        if (estimatePriceEl) estimatePriceEl.textContent = "Select services";
+        if (estimateTimeEl) estimateTimeEl.textContent = "--";
+        return;
       }
 
-      form.reset();
-      status.textContent = "Message received. FXN Studio will reply within 1-2 business days.";
-      status.classList.add("is-success");
-    } catch (error) {
-      status.textContent = (error && error.message) || "Something went wrong. Please email contact@fxnstudio.com.";
-      status.classList.add("is-error");
-    } finally {
-      button.disabled = false;
-      button.textContent = initialText;
+      const timelineVal = timelineSelect ? timelineSelect.value : "standard";
+      if (timelineVal === "express") {
+        basePrice = Math.round(basePrice * 1.25);
+        totalWeeks = Math.max(2, Math.round(totalWeeks * 0.7));
+      }
+
+      if (estimatePriceEl) estimatePriceEl.textContent = `$${basePrice.toLocaleString()} AUD`;
+      if (estimateTimeEl) estimateTimeEl.textContent = `${totalWeeks} - ${totalWeeks + 2} Weeks`;
+    };
+
+    scopeCheckboxes.forEach((cb) => cb.addEventListener("change", calculateEstimate));
+    if (timelineSelect) timelineSelect.addEventListener("change", calculateEstimate);
+    calculateEstimate();
+  }
+
+  // 10. Project Brief Modal Handlers
+  const briefModal = document.querySelector("[data-brief-modal]");
+  const briefOpeners = document.querySelectorAll("[data-open-brief]");
+  const briefClosers = document.querySelectorAll("[data-close-brief]");
+
+  const openModal = (e) => {
+    if (e) e.preventDefault();
+    if (briefModal) {
+      briefModal.classList.add("is-open");
+      briefModal.setAttribute("aria-hidden", "false");
+      if (typeof briefModal.showModal === "function") {
+        try { briefModal.showModal(); } catch (err) {}
+      }
+      document.body.style.overflow = "hidden";
     }
-  });
+  };
+
+  const closeModal = () => {
+    if (briefModal) {
+      briefModal.classList.remove("is-open");
+      briefModal.setAttribute("aria-hidden", "true");
+      if (typeof briefModal.close === "function") {
+        try { briefModal.close(); } catch (err) {}
+      }
+      document.body.style.overflow = "";
+    }
+  };
+
+  briefOpeners.forEach((btn) => btn.addEventListener("click", openModal));
+  briefClosers.forEach((btn) => btn.addEventListener("click", closeModal));
+
+  if (briefModal) {
+    briefModal.addEventListener("click", (e) => {
+      if (e.target === briefModal) closeModal();
+    });
+  }
+
+  // 11. IntersectionObserver Scroll Reveal Animations
+  const revealElements = document.querySelectorAll("[data-reveal]");
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.1 });
+
+    revealElements.forEach((el) => observer.observe(el));
+  } else {
+    revealElements.forEach((el) => el.classList.add("is-visible"));
+  }
 });
