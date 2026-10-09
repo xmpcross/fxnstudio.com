@@ -44,13 +44,6 @@
       </nav>
 
       <div class="header-actions-group">
-        <button class="theme-toggle" type="button" aria-label="Toggle light or dark theme" data-theme-toggle title="Toggle Light/Dark Theme">
-          <span class="theme-toggle-inner">
-            <span class="theme-icon icon-sun" aria-hidden="true"><i data-lucide="sun"></i></span>
-            <span class="theme-icon icon-moon" aria-hidden="true"><i data-lucide="moon"></i></span>
-          </span>
-          <span class="theme-label">Theme</span>
-        </button>
 
         <a class="header-cta" href="#project-brief-modal" data-open-brief>
           Send a Project Brief <i data-lucide="arrow-up-right"></i>
@@ -244,7 +237,7 @@
         <p>Fill in a few details and we’ll prepare a tailored response with scope recommendations.</p>
       </div>
 
-      <form name="project-brief-modal-form" method="POST" action="/__forms.html" data-netlify="true" netlify-honeypot="bot-field">
+      <form name="project-brief-modal-form" method="POST" action="#">
         <input type="hidden" name="form-name" value="project-brief">
         <input type="hidden" name="subject" value="[fxnstudio.com] Modal Brief Submission">
         <p class="hidden" style="display:none;"><input name="bot-field"></p>
@@ -298,6 +291,7 @@
     </div>
   </dialog>
 
+  <script src="/assets/js/build-version.js"></script>
   <script src="/assets/main.js?v=20261009-lucide-v9"></script>
 </body>
 </html>

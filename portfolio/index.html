@@ -44,13 +44,6 @@
       </nav>
 
       <div class="header-actions-group">
-        <button class="theme-toggle" type="button" aria-label="Toggle light or dark theme" data-theme-toggle title="Toggle Light/Dark Theme">
-          <span class="theme-toggle-inner">
-            <span class="theme-icon icon-sun" aria-hidden="true"><i data-lucide="sun"></i></span>
-            <span class="theme-icon icon-moon" aria-hidden="true"><i data-lucide="moon"></i></span>
-          </span>
-          <span class="theme-label">Theme</span>
-        </button>
 
         <a class="header-cta" href="#project-brief-modal" data-open-brief>
           Send a Project Brief <i data-lucide="arrow-up-right"></i>
@@ -129,6 +122,17 @@
 
           <!-- 01: OriginFacts -->
           <article class="bento-card bento-col-4" data-reveal="true">
+            <div class="bento-card-media">
+              <div class="browser-bar">
+                <div class="browser-dots">
+                  <span class="browser-dot red"></span>
+                  <span class="browser-dot yellow"></span>
+                  <span class="browser-dot green"></span>
+                </div>
+                <div class="browser-url-pill"><i data-lucide="lock" class="icon-sm"></i> https://originfacts.com</div>
+              </div>
+              <img src="/assets/images/portfolio/originfacts.jpg" alt="OriginFacts travel engine platform live screenshot" loading="lazy">
+            </div>
             <div class="bento-card-body">
               <div class="bento-tags">
                 <span class="tag-pill"><i data-lucide="plane" class="icon-sm"></i> 01 / Travel &amp; Booking</span>
@@ -139,6 +143,7 @@
               <div class="bento-stat-badge"><i data-lucide="zap" class="icon-sm"></i> Next.js • React • Headless CMS</div>
             </div>
           </article>
+
 
           <!-- 02: NXT Deals -->
           <article class="bento-card bento-col-4" data-reveal="true" data-reveal-delay="100">
@@ -387,7 +392,7 @@
         <p>Complete this brief to help us understand your vision and requirements.</p>
       </div>
 
-      <form name="project-brief" method="POST" action="/__forms.html" data-netlify="true" class="brief-form">
+      <form name="project-brief" method="POST" action="#" class="brief-form">
         <input type="hidden" name="form-name" value="project-brief">
         <div class="form-group">
           <label for="name">Your Name *</label>
@@ -416,6 +421,7 @@
     </div>
   </dialog>
 
+  <script src="/assets/js/build-version.js"></script>
   <script src="/assets/main.js?v=20261009-cyber-v8"></script>
 </body>
 </html>

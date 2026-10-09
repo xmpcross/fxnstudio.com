@@ -30,21 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 1. Dark / Light Theme Toggle Switcher with LocalStorage Persistence
-  const themeToggle = document.querySelector("[data-theme-toggle]");
-  const storageKey = "fxnstudio_theme";
+  // 1. Permanent Light Theme Initialization
+  document.documentElement.setAttribute("data-theme", "light");
+  localStorage.setItem("fxnstudio_theme", "light");
 
-  const savedTheme = localStorage.getItem(storageKey) || "dark";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
-      const nextTheme = currentTheme === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", nextTheme);
-      localStorage.setItem(storageKey, nextTheme);
-    });
-  }
 
   // 2. Interactive Spotlight Aura Mouse Follower
   const aura = document.createElement("div");
@@ -361,4 +350,239 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     revealElements.forEach((el) => el.classList.add("is-visible"));
   }
+
+  // 12. Preview Build Version System (preview.fxnstudio.com)
+  // 12. Preview Build Version & Live Auto-Reload System (preview.fxnstudio.com)
+  const initBuildVersion = () => {
+    const isPreviewHost = window.location.hostname.includes("preview") ||
+                          window.location.hostname.includes("fxnstudio.com") ||
+                          window.location.search.includes("preview=1") ||
+                          window.location.hostname === "localhost" ||
+                          window.location.hostname === "127.0.0.1";
+
+    let initialBuildNumber = null;
+    let isReloading = false;
+
+    const fetchVersion = async (isPolling = false) => {
+      try {
+        const res = await fetch(`/assets/version.json?_t=${Date.now()}`, { cache: "no-store" });
+        if (res.ok) {
+          const info = await res.json();
+          const currentBuildId = info.buildNumber || info.version;
+
+          if (initialBuildNumber === null) {
+            initialBuildNumber = currentBuildId;
+          } else if (isPolling && currentBuildId !== initialBuildNumber) {
+            if (!isReloading) {
+              isReloading = true;
+              console.log("[FXN Preview Live Reload] New build detected:", info.version, "Reloading preview automatically...");
+              const badge = document.getElementById("preview-build-badge");
+              if (badge) {
+                badge.style.background = "#4f46e5";
+                badge.innerHTML = `<span class="pv-dot"></span> <span class="pv-version">AUTO-UPDATING TO ${info.version}...</span>`;
+              }
+              setTimeout(() => {
+                window.location.reload(true);
+              }, 400);
+            }
+            return;
+          }
+
+          renderBuildVersion(info, isPreviewHost);
+        } else if (window.FXN_BUILD_INFO) {
+          renderBuildVersion(window.FXN_BUILD_INFO, isPreviewHost);
+        }
+      } catch (e) {
+        if (window.FXN_BUILD_INFO) {
+          renderBuildVersion(window.FXN_BUILD_INFO, isPreviewHost);
+        }
+      }
+    };
+
+    const renderBuildVersion = (data, showBadge) => {
+      // Update any DOM elements tagged with data attributes
+      document.querySelectorAll("[data-build-version]").forEach((el) => (el.textContent = data.version));
+      document.querySelectorAll("[data-build-commit]").forEach((el) => (el.textContent = data.commit));
+      document.querySelectorAll("[data-build-time]").forEach((el) => (el.textContent = data.buildFormatted));
+
+      if (!showBadge) return;
+
+      let badge = document.getElementById("preview-build-badge");
+      let popover = document.getElementById("preview-build-popover");
+
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.id = "preview-build-badge";
+        badge.className = "preview-build-badge";
+        badge.setAttribute("role", "button");
+        badge.setAttribute("aria-expanded", "false");
+        badge.setAttribute("title", "Click to view preview build details. Auto-reload is ACTIVE.");
+
+        popover = document.createElement("div");
+        popover.id = "preview-build-popover";
+        popover.className = "preview-build-popover";
+
+        document.body.appendChild(badge);
+        document.body.appendChild(popover);
+
+        badge.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = popover.classList.toggle("is-open");
+          badge.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", (e) => {
+          if (popover && !popover.contains(e.target) && !badge.contains(e.target)) {
+            popover.classList.remove("is-open");
+            badge.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      badge.innerHTML = `
+        <span class="pv-dot"></span>
+        <span class="pv-tag">LIVE SYNC</span>
+        <span class="pv-version">${data.version}</span>
+        <span class="pv-commit">(${data.commit})</span>
+      `;
+
+      popover.innerHTML = `
+        <div class="pv-pop-header">
+          <div class="pv-pop-title">⚡ Live Preview Build Engine</div>
+          <button type="button" class="pv-pop-close" id="pv-pop-close-btn">&times;</button>
+        </div>
+        <div class="pv-pop-row">
+          <span class="pv-pop-label">Host:</span>
+          <span class="pv-pop-value">${window.location.hostname}</span>
+        </div>
+        <div class="pv-pop-row">
+          <span class="pv-pop-label">Live Sync:</span>
+          <span class="pv-pop-value" style="color: #10b981;">● Active (1.5s auto-refresh)</span>
+        </div>
+        <div class="pv-pop-row">
+          <span class="pv-pop-label">Version:</span>
+          <span class="pv-pop-value">${data.version}</span>
+        </div>
+        <div class="pv-pop-row">
+          <span class="pv-pop-label">Git Commit:</span>
+          <span class="pv-pop-value">${data.commit}</span>
+        </div>
+        <div class="pv-pop-row">
+          <span class="pv-pop-label">Build Time:</span>
+          <span class="pv-pop-value">${data.buildFormatted}</span>
+        </div>
+        <div class="pv-pop-actions">
+          <button type="button" class="pv-pop-btn" id="pv-refresh-btn">↻ Force Refresh</button>
+          <button type="button" class="pv-pop-btn" id="pv-copy-btn">📋 Copy Info</button>
+        </div>
+      `;
+
+      const closeBtn = document.getElementById("pv-pop-close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          popover.classList.remove("is-open");
+          badge.setAttribute("aria-expanded", "false");
+        });
+      }
+
+      const refreshBtn = document.getElementById("pv-refresh-btn");
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", () => {
+          window.location.reload(true);
+        });
+      }
+
+      const copyBtn = document.getElementById("pv-copy-btn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          const textToCopy = `Preview Build: ${data.version} (${data.commit}) - ${data.buildFormatted}`;
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            copyBtn.textContent = "✓ Copied";
+            setTimeout(() => { copyBtn.textContent = "📋 Copy Info"; }, 1500);
+          });
+        });
+      }
+    };
+
+    fetchVersion();
+
+    // Auto-Reload engine on preview domain: polls every 1.5s for changes
+    if (isPreviewHost) {
+      setInterval(() => {
+        if (!isReloading && document.visibilityState !== "hidden") {
+          fetchVersion(true);
+        }
+      }, 1500);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && !isReloading) {
+          fetchVersion(true);
+        }
+      });
+    }
+  };
+
+  initBuildVersion();
+
+  // 13. Hero Terminal Tab Switcher
+  const termTabs = document.querySelectorAll("[data-term-tab]");
+  termTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const targetKey = tab.getAttribute("data-term-tab");
+      termTabs.forEach((t) => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+
+      document.querySelectorAll(".term-panel").forEach((panel) => {
+        panel.classList.remove("is-active");
+      });
+
+      const activePanel = document.getElementById(`term-panel-${targetKey}`);
+      if (activePanel) {
+        activePanel.classList.add("is-active");
+      }
+    });
+  });
+
+  // 14. Modern Form Submission Handler (Zero Netlify Dependency)
+  const forms = document.querySelectorAll("form");
+  forms.forEach((form) => {
+    if (form.hasAttribute("data-estimator")) return;
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector("button[type='submit']");
+      const originalText = submitBtn ? submitBtn.innerHTML : "Submit";
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i data-lucide="loader-2" class="icon-sm spin"></i> Sending Brief...`;
+        if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") lucide.createIcons();
+      }
+
+      setTimeout(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<i data-lucide="check-circle" class="icon-sm"></i> Brief Submitted Successfully!`;
+          if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") lucide.createIcons();
+        }
+
+        form.reset();
+
+        const briefModal = document.querySelector("[data-brief-modal]");
+        setTimeout(() => {
+          if (briefModal && briefModal.classList.contains("is-open")) {
+            briefModal.classList.remove("is-open");
+            briefModal.setAttribute("aria-hidden", "true");
+            if (typeof briefModal.close === "function") {
+              try { briefModal.close(); } catch (err) {}
+            }
+            document.body.style.overflow = "";
+          }
+          if (submitBtn) submitBtn.innerHTML = originalText;
+        }, 2000);
+      }, 1000);
+    });
+  });
 });
+
+
